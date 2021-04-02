@@ -9,7 +9,7 @@
 				<?php echo $row['details']; ?>
 			</div>
 			<div>
-				<?php echo $row['startdate']; ?>
+				<?php echo $row['starttime']; ?>
 			</div>
 		<?php endforeach; ?>
 	</body>

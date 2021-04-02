@@ -1,6 +1,7 @@
 <?php
 
 use Fuel\Core\Controller;
+use Fuel\Core\Input;
 
 class Controller_Event extends Controller{
 
@@ -9,6 +10,23 @@ class Controller_Event extends Controller{
         $data['rows'] = Model_Event::find_all();
 
         return View::forge('event/list',$data);
+    }
+
+    public function action_form(){
+        return View::forge('event/form');
+    }
+
+    public function action_save(){
+        $form = array();
+        $form['title'] = Input::post('title');
+        $form['starttime'] = Input::post('starttime');
+        $form['endtime'] = Input::post('endtime');
+        $form['details'] = Input::post('details');
+
+        $event = Model_Event::forge();
+        $event->set($form);
+        $event->save();
+        Response::redirect('event');
     }
 
     public function action_auto_insert(){
