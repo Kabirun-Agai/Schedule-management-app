@@ -1,5 +1,52 @@
 <?php
 
+//引数の日付けが祝日であれば、一行改行して、祝日名を表示する関数 
+//※引数1は日付"2017-05-14"の"Y-m-d"型、引数に2は祝日の配列データこのメソッドを呼ぶときは下のgetHolidays()関数を使って祝日データ配列を作る必要があります。
+
+use Fuel\Core\Asset;
+
+function display_to_Holidays($date,$Holidays_array) {
+	//祝日データ配列の中に、引数の日付がキーのデータが入ってるか調べます
+	if(array_key_exists($date,$Holidays_array)){
+		//引数の日付がキーのデータが入っていたら
+		$holidays = "<br/>".$Holidays_array[$date];//一行改行、祝日名を代入
+		return $holidays; 
+	}
+}
+
+//GoogleカレンダーAPIから祝日を取得
+function getHolidays($year) {
+	
+	$api_key = 'AIzaSyDFmu3IwAeWovN0w6xvubPSVXBvcoxfvRI';
+	$holidays = array();
+	$holidays_id = 'japanese__ja@holiday.calendar.google.com'; // Google 公式版日本語
+	//$holidays_id = 'japanese@holiday.calendar.google.com'; // Google 公式版英語
+	//$holidays_id = 'outid3el0qkcrsuf89fltf7a4qbacgt9@import.calendar.google.com'; // mozilla.org版 ←2017年5月時点で文字化け発生中（山の日）
+	$url = sprintf(
+		'https://www.googleapis.com/calendar/v3/calendars/%s/events?'.
+		'key=%s&timeMin=%s&timeMax=%s&maxResults=%d&orderBy=startTime&singleEvents=true',
+		$holidays_id,
+		$api_key,
+		$year.'-01-01T00:00:00Z' , // 取得開始日
+		$year.'-12-31T00:00:00Z' , // 取得終了日
+		150 // 最大取得数
+	);
+ 
+	if ( $results = file_get_contents($url, true )) {
+		//JSON形式で取得した情報を配列に格納
+		$results = json_decode($results);
+		//年月日をキー、祝日名を配列に格納
+		foreach ($results->items as $item ) {
+			$date = strtotime((string) $item->start->date);
+			$title = (string) $item->summary;
+			$holidays[date('Y-m-d', $date)] = $title;
+		}
+		//祝日の配列を並び替え
+		ksort($holidays);
+	}
+	return $holidays; 
+}
+
 //曜日取得関数 引数は int 曜日の数字
 function week_cquisition_int($week){
 	if($week=="0"){
@@ -19,6 +66,7 @@ function week_cquisition_int($week){
 	}
 	return $week_string;
 }
+
 //ページ読込前の設定部分
 
 ///////////////////////////////////
@@ -26,11 +74,11 @@ function week_cquisition_int($week){
 //////////////////////////////////
 $get_display_date = $_GET['first_day_of_month'];
 if($get_display_date == null){
- //$_GET['first_day_of_month'];がnullだった場合は本日の日付
- $display_date = date("Y-m-1");//表示日時　ページを開いた時に表示される月の最初の日付 例：2017-05-01 必ずその月の1日が指定される。このページは月で管理していているので、ページを開いた当日の日付ではなく、当日の月の1日を入れる。じゃないと3月31から1ヶ月引くと3月2日になるバグが発生するから
+	//$_GET['first_day_of_month'];がnullだった場合は本日の日付
+	$display_date = date("Y-m-01");//表示日時　ページを開いた時に表示される月の最初の日付 例：2017-05-01 必ずその月の1日が指定される。このページは月で管理していているので、ページを開いた当日の日付ではなく、当日の月の1日を入れる。じゃないと3月31から1ヶ月引くと3月2日になるバグが発生するから
 }else{
- //$_GET['first_day_of_month']入ってた場合はその日付
- $display_date = $get_display_date;
+	//$_GET['first_day_of_month']入ってた場合はその日付
+	$display_date = $get_display_date;
 }
 //表示されている日から一週間の曜日を、数値で配列化 表示されてる日が、$week_int_array[0] 次の日が $week_int_array[1]
 //文字、例:日 月 火 水 木 金 土 というように配列化 $week_strings_array[] //カレンダーに曜日を表示するときに使う
@@ -46,12 +94,75 @@ for($i = 0; $i < 7; $i++){
 	
 	$week_d = date("Y-m-d", strtotime($week_d.' +1 day'));//while文で回す為に$week_d変数を、１日インクリメントする
 }
+$display_day_array = array();//カレンダーに日を出力するための配列を初期化、表示されてる月の正確な日付が入ってます
+$display_year = date("Y",strtotime($display_date));//ページを開いた時の年を代入 違う月のカレンダーを見ている場合はその年を代入
+$display_month = date("m",strtotime($display_date));//ページを開いた時の月を代入 違う月のカレンダーを見ている場合はその月を代入
+$display_day = date("j",strtotime($display_date));//月の最初である日付、1を代入
+// checkdate()関数でその月の性格な日数を求める、参考サイト：https://php1st.com/1001/
+while (checkdate($display_month, $display_day, $display_year)) {
+    array_push($display_day_array,$display_day);
+    $display_day++;//日付変数をインクリメント
+}
+$display_tb_name_array = array();//カレンダーのname属性を変わって表示させる配列を初期化　0行目の「水」と記載されてるとこなら、「name03」1行目の日曜日なら「name10」2行目の土曜日なら「name26」3行目の月曜日なら「name31」というふうに「"name" 行数 曜日の数値型」で配列に代入します。
+$lines = 0;//下記while文で使うカレンダーの行数を入れる変数
+$w = 0;//下記while文で使う曜日の数値化型インクリメント用変数
+for($i = 0; $i <52; $i++){//縦7、横7のデザインのカレンダーだから多めに繰り返して作っておく
+	if($i==7 OR $i==14 OR $i==21 OR $i==28 OR $i==35 OR $i==42 OR $i==49){//行数は7回ずつくりかえした時に+1してインクリメントする
+		$lines++;
+		$w = 0;
+	}
+	array_push($display_tb_name_array,"name".$lines.$w);
+	$w++;//曜日数値をインクリメント
+}
+$Holidays_array = getHolidays($display_year);//今年の祝日データ配列を作成
+
+//tbタグのid属性を設定する配列を初期化　命名規則は、「
+//命名規則は、「"topcalendar_" "line" カレンダーの行数 "_week" 曜日数字 "_holiday" 祝日だったら1、祝日ではなければ0」とします。
+$display_tb_id_array = array();
+$lines = 0;//下記while文で使うカレンダーの行数を入れる変数
+$i=0;
+$month_fast_day_week = date("w",strtotime($display_date));//月の最初の日の曜日を求める
+$month_fast_day_week_int = $month_fast_day_week + 7; //カレンダーの一行目は曜日を出力してるだけだから7を足して、それ以降、祝日のときは1とする。
+$w = 0;//下記while文で使う曜日の数値化型インクリメント用変数
+$ii = 0;
+while($i<count($display_tb_name_array)){ //上で作ったtbのname属性の配列の数分繰り返す
 	
+	if($ii==7 OR $ii==14 OR $ii==21 OR $ii==28 OR $ii==35 OR $ii==42 OR $ii==49){//行数は7回ずつくりかえした時に+1してインクリメントする
+		$lines++;
+	}
+	
+	$display_tb_id = "topcalendar_line".$lines."_week".$w."_holiday";
+	//もし月の初めの日まで何日かあるようなら、そこまでの祝日の命名規則は0にする
+	if($month_fast_day_week_int != 0){
+		$display_tb_id .= "0";
+		$month_fast_day_week_int--; //月の初めの日までは祝日を入れない判断に使うのでデクリメント
+	}else{
+		if($i >= count($display_day_array)){
+			break;
+		}
+		if(array_key_exists(date("Y-m-d",strtotime($display_year."-".$display_month."-".$display_day_array[$i])),$Holidays_array)){
+			//祝日配列の日に、その日が入っていれば、1を文字列に追加、入っていなければ0を追加
+			$display_tb_id .= "1";
+		}else{
+			$display_tb_id .= "0";
+		}
+		$i++;
+	}
+	array_push($display_tb_id_array,$display_tb_id);
+	
+	$ii++;
+	$w++;
+	//曜日数字用インメント変数なので、7になるまで増えたら、0を代入する
+	if($w == 7){
+		$w = 0;
+	}
+}
 
 ?>
 
 <html>
 <head>
+<?php echo Asset::css('calendar.css');?>
 </head>
 <body>
 
@@ -59,24 +170,130 @@ for($i = 0; $i < 7; $i++){
 <!-- 何月を表示 -->
 <div>
 <!-- 一ヶ月前のページへのリンク -->
-<a href="index.php?first_day_of_month=<?php echo date('Y-m-1',strtotime("-1 month",strtotime($display_date))); ?>"><<</a>
+<a href="index.php?first_day_of_month=<?php echo date('Y-m-01',strtotime("-1 month",strtotime($display_date))); ?>"><<</a>
 <!-- /一ヶ月前のページへのリンク -->
 <?php echo date('Y-n',strtotime($display_date)); ?>
 <!-- 一ヶ月後のページへのリンク -->
-<a href="index.php?first_day_of_month=<?php echo date('Y-m-1',strtotime("+1 month",strtotime($display_date))); ?>">>></a>
+<a href="index.php?first_day_of_month=<?php echo date('Y-m-01',strtotime("+1 month",strtotime($display_date))); ?>">>></a>
 <!-- /一ヶ月後のページへのリンク -->
-</div>
-<!-- /何月を表示 -->
 <br/>
 <!-- リストフォームボックス -->
 <div>
 
-<table border="1">
-  <tr>
-    <td>1</td>
-    <td>2</td>
-  </tr>
+<!-- カレンダー部分 -->
+<div>
+
+<table class="topcalendar" border="1">
+<!-- 曜日表示部分 --><!-- $week_strings_array[]配列は、[]内に0～6の数値入れることで曜日を出力する配列、このファイル内で定義してる配列 -->
+<?php $i=0; ?>
+<tr>
+	<td name=<?php echo $display_tb_name_array[$i];?> id=<?php echo $display_tb_id_array[$i];$i++; ?>><?php echo $week_strings_array[0]; ?></td>
+	<td name=<?php echo $display_tb_name_array[$i];?> id=<?php echo $display_tb_id_array[$i];$i++; ?>><?php echo $week_strings_array[1]; ?></td>
+	<td name=<?php echo $display_tb_name_array[$i];?> id=<?php echo $display_tb_id_array[$i];$i++; ?>><?php echo $week_strings_array[2]; ?></td>
+	<td name=<?php echo $display_tb_name_array[$i];?> id=<?php echo $display_tb_id_array[$i];$i++; ?>><?php echo $week_strings_array[3]; ?></td>
+	<td name=<?php echo $display_tb_name_array[$i];?> id=<?php echo $display_tb_id_array[$i];$i++; ?>><?php echo $week_strings_array[4]; ?></td>
+	<td name=<?php echo $display_tb_name_array[$i];?> id=<?php echo $display_tb_id_array[$i];$i++; ?>><?php echo $week_strings_array[5]; ?></td>
+	<td name=<?php echo $display_tb_name_array[$i];?> id=<?php echo $display_tb_id_array[$i];$i++; ?>><?php echo $week_strings_array[6]; ?></td>
+</tr>
+<!-- 日付表示部分 -->
+<?php 
+//日付はどうやって出力してるかというと、tbのname属性の命名規則は「"name" カレンダーの行数 曜日数字」だから、
+//初日1日は一行目に出したいから、「"name1" 初日1日の曜日数値」を比較して合ってたら日付を入れてる。
+//ここを編集するときはインクリメントとか細かいところに注意する事。
+//それで一回入れたらフラグを立ててそれ以降はフラグで判断して日付を入れてる
+
+$ii=0;//下記のカレンダー日付出力で使うインクリメント変数
+$display_calendar_flag = 0;//下記のカレンダー日付出力で使うフラグ変数初期化　※月の初日1日目より前をを表示させない為だけに使う変数
+for($iii = 0; $iii <5; $iii++){
+?>
+<tr>
+<?php
+	for($iiii = 0; $iiii <7; $iiii++){
+?>
+	<td name=
+		<?php echo $display_tb_name_array[$i]; //name属性付与 ?>
+	 id=
+	 	<?php 
+		 if($i < count($display_tb_id_array)){
+			echo $display_tb_id_array[$i]; //id属性付与
+		 }
+	 	?>
+	>
+		<?php
+		if($display_calendar_flag == 1){//flagが1だったら、下記の処理を実行
+			if($ii >= count($display_day_array)){
+				break;
+			}
+			echo $display_day_array[$ii]//日付を表示
+			.display_to_Holidays(date("Y-m-d",strtotime($display_year."-".$display_month."-".$display_day_array[$ii])),$Holidays_array); //祝日があれば一行改行して表示、function.phpの中の関数
+			$i++;
+			$ii++;
+		}elseif($display_calendar_flag == 0){//flagが0だったら、下記の処理を実行
+			if($display_tb_name_array[$i] == "name1".date("w",strtotime($display_date))){//tbのタグのname属性が一緒だったら1日目を表示させる為、下記の処理を実行
+				echo $display_day_array[$ii]//日付を表示
+				.display_to_Holidays(date("Y-m-d",strtotime($display_year."-".$display_month."-".$display_day_array[$ii])),$Holidays_array);//祝日があれば一行改行して表示、function.phpの中の関数
+				$display_calendar_flag = 1;//flagを1に変える
+				$ii++;
+			}
+			$i++;
+		}
+		?>
+	</td>
+<?php
+	}
+?>
+</tr>
+<?php
+}
+?>
+<?php //表が縦7行必要な時は、行を追加します。
+if(count($display_day_array) > 30 AND date("w",strtotime($display_date)) >= 5){ //月の日数が30日以上で、且つ、月の最初の1日が金曜か土曜から始まっていたら
+?>
+<tr>
+	<?php
+	for($iiii = 0; $iiii <7; $iiii++){
+	?>
+	<td name=
+		<?php echo $display_tb_name_array[$i]; //name属性付与 ?>
+	 id=
+	 	<?php 
+		 if($i < count($display_tb_id_array)){
+			echo $display_tb_id_array[$i]; //id属性付与
+		 }
+	 	?>
+	>
+		<?php
+		if($display_calendar_flag == 1){//flagが1だったら、下記の処理を実行
+			if($ii >= count($display_day_array)){
+				break;
+			}
+			echo $display_day_array[$ii]//日付を表示
+			.display_to_Holidays(date("Y-m-d",strtotime($display_year."-".$display_month."-".$display_day_array[$ii])),$Holidays_array); //祝日があれば一行改行して表示、function.phpの中の関数
+			$i++;
+			$ii++;
+		}elseif($display_calendar_flag == 0){//flagが0だったら、下記の処理を実行
+			if($display_tb_name_array[$i] == "name1".date("w",strtotime($display_date))){//tbのタグのname属性が一緒だったら1日目を表示させる為、下記の処理を実行
+				echo $display_day_array[$ii]//日付を表示
+				.display_to_Holidays(date("Y-m-d",strtotime($display_year."-".$display_month."-".$display_day_array[$ii])),$Holidays_array);//祝日があれば一行改行して表示、function.phpの中の関数
+				$display_calendar_flag = 1;//flagを1に変える
+				$ii++;
+			}
+			$i++;
+		}
+		?>
+	</td>
+	<?php
+	}
+	?>
+</tr>
+<?php
+}
+?>
+<!-- /日付表示部分 -->
 </table>
+
+</div>
+<!-- /カレンダー部分 -->
 
 
 </body>
