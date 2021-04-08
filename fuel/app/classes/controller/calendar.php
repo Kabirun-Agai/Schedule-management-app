@@ -1,8 +1,11 @@
 <?php
-class Controller_Calendar extends Controller
+
+class Controller_Calendar extends Controller_Template
 {
     public function action_index()
     {
-        return Response::forge(View::forge('calendar'));
+        $data = array();
+        $data['events'] = Model_Event::find_all();
+        $this->template->content = Response::forge(View::forge('calendar',$data));
     }
 }

@@ -3,7 +3,17 @@
 //引数の日付けが祝日であれば、一行改行して、祝日名を表示する関数 
 //※引数1は日付"2017-05-14"の"Y-m-d"型、引数に2は祝日の配列データこのメソッドを呼ぶときは下のgetHolidays()関数を使って祝日データ配列を作る必要があります。
 
-use Fuel\Core\Asset;
+
+
+function display_to_events($date,$events){
+	//祝日データ配列の中に、引数の日付がキーのデータが入ってるか調べます
+	foreach($events as $event){
+		if($date == date('Y-m-d',strtotime($event["starttime"]))){
+			$eventday =  "<br/>".$event["title"];
+			return $eventday;
+		}
+	}
+}
 
 function display_to_Holidays($date,$Holidays_array) {
 	//祝日データ配列の中に、引数の日付がキーのデータが入ってるか調べます
@@ -72,7 +82,14 @@ function week_cquisition_int($week){
 ///////////////////////////////////
 //$display_date の日付を変えるとその日のページに変わる & 変数初期化・設定
 //////////////////////////////////
-$get_display_date = $_GET['first_day_of_month'];
+//初回のアクセス(つまり、URLパラメータにfirst_day_of_monthが付与されていないとき)では強制的に現在の月を表示する
+$get_display_date = null;
+if(!isset($_GET['first_day_of_month'])){
+	$get_display_date == null;
+}else{
+	$get_display_date = $_GET['first_day_of_month'];
+}
+
 if($get_display_date == null){
 	//$_GET['first_day_of_month'];がnullだった場合は本日の日付
 	$display_date = date("Y-m-01");//表示日時　ページを開いた時に表示される月の最初の日付 例：2017-05-01 必ずその月の1日が指定される。このページは月で管理していているので、ページを開いた当日の日付ではなく、当日の月の1日を入れる。じゃないと3月31から1ヶ月引くと3月2日になるバグが発生するから
@@ -158,23 +175,27 @@ while($i<count($display_tb_name_array)){ //上で作ったtbのname属性の配�
 	}
 }
 
+//Viewからの値の受け取り
+$events;
+
+
 ?>
 
 <html>
 <head>
 <?php echo Asset::css('calendar.css');?>
 </head>
-<body>
+<body class = "calendar">
 
-<h2>月間スケジュール</h2>
+<h2><?php print_r($events[0]["id"]);?></h2>
 <!-- 何月を表示 -->
 <div>
 <!-- 一ヶ月前のページへのリンク -->
-<a href="index.php?first_day_of_month=<?php echo date('Y-m-01',strtotime("-1 month",strtotime($display_date))); ?>"><<</a>
+<a href="?first_day_of_month=<?php echo date('Y-m-01',strtotime("-1 month",strtotime($display_date))); ?>"><<</a>
 <!-- /一ヶ月前のページへのリンク -->
 <?php echo date('Y-n',strtotime($display_date)); ?>
 <!-- 一ヶ月後のページへのリンク -->
-<a href="index.php?first_day_of_month=<?php echo date('Y-m-01',strtotime("+1 month",strtotime($display_date))); ?>">>></a>
+<a href="?first_day_of_month=<?php echo date('Y-m-01',strtotime("+1 month",strtotime($display_date))); ?>">>></a>
 <!-- /一ヶ月後のページへのリンク -->
 <br/>
 <!-- リストフォームボックス -->
@@ -225,7 +246,8 @@ for($iii = 0; $iii <5; $iii++){
 				break;
 			}
 			echo $display_day_array[$ii]//日付を表示
-			.display_to_Holidays(date("Y-m-d",strtotime($display_year."-".$display_month."-".$display_day_array[$ii])),$Holidays_array); //祝日があれば一行改行して表示、function.phpの中の関数
+			.display_to_Holidays(date("Y-m-d",strtotime($display_year."-".$display_month."-".$display_day_array[$ii])),$Holidays_array) //祝日があれば一行改行して表示、function.phpの中の関数
+			.display_to_events(date("Y-m-d",strtotime($display_year."-".$display_month."-".$display_day_array[$ii])),$events);
 			$i++;
 			$ii++;
 		}elseif($display_calendar_flag == 0){//flagが0だったら、下記の処理を実行
@@ -291,6 +313,7 @@ if(count($display_day_array) > 30 AND date("w",strtotime($display_date)) >= 5){ 
 ?>
 <!-- /日付表示部分 -->
 </table>
+<?php echo Html::anchor('event/form',"予定を追加")?>
 
 </div>
 <!-- /カレンダー部分 -->

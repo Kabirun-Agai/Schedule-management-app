@@ -18,7 +18,7 @@ return array(
 	 *
 	 */
 
-	'_root_' => 'welcome/index',
+	'_root_' => 'calendar/index',
 
 	/**
 	 * -------------------------------------------------------------------------
@@ -39,4 +39,5 @@ return array(
 	 */
 
 	'hello(/:name)?' => array('welcome/hello', 'name' => 'hello'),
+	
 );

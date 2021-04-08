@@ -16,6 +16,11 @@ class Controller_Event extends Controller{
         return View::forge('event/form');
     }
 
+    public function action_show(){
+        $data = array();
+        $data['rows'] = Model_Event::find_all();
+    }
+
     public function action_save(){
         $form = array();
         $form['title'] = Input::post('title');
