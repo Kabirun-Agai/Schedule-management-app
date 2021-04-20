@@ -18,8 +18,7 @@ return array(
 	 *
 	 */
 
-	'_root_' => 'calendar/index',
-
+	'_root_' => 'welcome/index',
 	/**
 	 * -------------------------------------------------------------------------
 	 *  Page not found
@@ -39,5 +38,5 @@ return array(
 	 */
 
 	'hello(/:name)?' => array('welcome/hello', 'name' => 'hello'),
-	
+	'event/calendar' => 'member/calendar'
 );

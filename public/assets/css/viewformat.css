@@ -1,0 +1,15 @@
+#left-content{
+    width: 500px;
+    margin:0 auto;
+    margin-top: 20px;
+}
+
+#form_submit{
+    display: inline;
+    margin-left: 326px;
+}
+
+/* #light-content{
+    width: 500px;
+    display: inline-block;
+} */

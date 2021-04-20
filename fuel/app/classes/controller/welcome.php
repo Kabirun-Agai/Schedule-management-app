@@ -10,6 +10,7 @@
  * @link       https://fuelphp.com
  */
 
+
 /**
  * The Welcome Controller.
  *
@@ -19,7 +20,7 @@
  * @package  app
  * @extends  Controller
  */
-class Controller_Welcome extends Controller
+class Controller_Welcome extends Controller_Template
 {
 	/**
 	 * The basic welcome message
@@ -29,11 +30,13 @@ class Controller_Welcome extends Controller
 	 */
 	public function action_index()
 	{
-		$data = array();
-		$data["name"] = "中川";
-
-		return Response::forge(View::forge('welcome/test',$data));
+		if(Auth::check()){
+			Response::redirect('member/calendar');
+		}else{
+			$this->template->content = Response::forge(View::forge('welcome/index'));
+		}
 	}
+
 
 	/**
 	 * A typical "Hello, Bob!" type example.  This uses a Presenter to
