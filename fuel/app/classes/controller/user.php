@@ -3,7 +3,7 @@
 class Controller_User extends Controller_Template{
 
     public function action_form(){
-        return View::forge('user/form');
+        $this->template->content = Response::forge(View::forge('user/form'));
     }
     public function action_save(){
         $auth = Auth::instance();

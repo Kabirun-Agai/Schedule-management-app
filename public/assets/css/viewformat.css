@@ -1,3 +1,7 @@
+#nextschedule{
+    font-size: 30px;
+}
+
 #left-content{
     width: 500px;
     margin:0 auto;
@@ -8,6 +12,7 @@
     display: inline;
     margin-left: 326px;
 }
+
 
 /* #light-content{
     width: 500px;

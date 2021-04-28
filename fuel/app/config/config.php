@@ -79,7 +79,7 @@ return array(
 
 	// 'caching' => false,
 
-	'cache_lifetime' => 3600,
+	// 'cache_lifetime' => 3600,
 
 	/**
 	 * -------------------------------------------------------------------------
@@ -142,19 +142,19 @@ return array(
 	 *  The default language.
 	 */
 
-	'language' => 'ja',
+	// 'language' => 'en',
 
 	/**
 	 *  Fallback language when file isn't available for default language.
 	 */
 
-	'language_fallback' => 'en',
+	// 'language_fallback' => 'en',
 
 	/**
 	 *  PHP set_locale() setting. Use null to not set.
 	 */
 
-	'locale' => 'en_JP.utf8',
+	// 'locale' => 'en_US',
 
 	/**
 	 * -------------------------------------------------------------------------
@@ -162,7 +162,7 @@ return array(
 	 * -------------------------------------------------------------------------
 	 */
 
-	'encoding' => 'UTF-8',
+	// 'encoding' => 'UTF-8',
 
 	/**
 	 * -------------------------------------------------------------------------
@@ -180,7 +180,7 @@ return array(
 	 *  Change the server's default timezone. This is optional.
 	 */
 
-	 'default_timezone' => 'Asia/Tokyo',
+	'default_timezone' => 'Asia/Tokyo',
 
 	/**
 	 * -------------------------------------------------------------------------
@@ -317,14 +317,14 @@ return array(
 	 * -------------------------------------------------------------------------
 	 */
 
-	'cookie' => array(
+	 'cookie' => array(
 		/**
 		 * ---------------------------------------------------------------------
 		 *  Number of seconds before the cookie expires
 		 * ---------------------------------------------------------------------
 		 */
 
-		// 'expiration' => 1000,
+		'expiration' => 0,
 
 		/**
 		 * ---------------------------------------------------------------------
@@ -340,7 +340,7 @@ return array(
 		 * ---------------------------------------------------------------------
 		 */
 
-		// 'domain' => null,
+		'domain' => null,
 
 		/**
 		 * ---------------------------------------------------------------------
@@ -348,7 +348,7 @@ return array(
 		 * ---------------------------------------------------------------------
 		 */
 
-		// 'secure' => false,
+		'secure' => false,
 
 		/**
 		 * ---------------------------------------------------------------------
@@ -356,8 +356,8 @@ return array(
 		 * ---------------------------------------------------------------------
 		 */
 
-	// 	'http_only' => false,
-	),
+		'http_only' => false,
+	 ),
 
 	/**
 	 * -------------------------------------------------------------------------
@@ -450,11 +450,27 @@ return array(
 	 */
 
 	'always_load' => array(
+		/**
+		 * ---------------------------------------------------------------------
+		 *  These packages are loaded on Fuel's startup.
+		 *  You can specify them in the following manner:
+		 *
+		 *      'packages' => array('auth');
+		 *
+		 *  This will assume the packages are in PKGPATH.
+		 *
+		 *  Use this format to specify the path to the package explicitly.
+		 *
+		 *      'packages' => array(
+		 *          array('auth' => PKGPATH.'auth/')
+		 *      );
+		 * ---------------------------------------------------------------------
+		 */
+
 		'packages' => array(
 			'orm',
 			'auth',
 		),
-	),
 
 		/**
 		 * ---------------------------------------------------------------------
@@ -516,5 +532,5 @@ return array(
 		 */
 
 		// 'language' => array(),
-	// ),
+	 ),
 );

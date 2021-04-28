@@ -4,6 +4,18 @@
 		<meta charset="UTF-8">
     <?php echo Asset::css('style.css');?>
     <?php echo Asset::css('viewformat.css');?>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.5.1/knockout-latest.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout-validation/2.0.4/knockout.validation.min.js"></script>
+    <script src="/assets/js/knockout-3.5.1.js"></script>
+    <script>
+      window.onload = function() {
+          var viewModel = {
+            title: 'Hello Knockout.js!!',
+            isTrue: true
+          };
+          ko.applyBindings(viewModel);
+      };
+    </script>
 	</header>
  
 	<body>
@@ -12,10 +24,11 @@
           <h1>新しい予定</h1>
         </div>
         <div class="form-block-body">
-          <form action="/event/save" accept-charset="utf-8" method="post">
+          <form action="/member/event/save" accept-charset="utf-8" method="post">
             <p>
               <label for="form_title">タイトル</label>
-              <input name="title" value="" type="text" id="form_title">
+              <input name="title" value="" type="text" id="form_title" data-bind="value: title">
+              <span data-bind="ifnot: isTrue">isTrue</span>
             </p>
 
             <p>
@@ -41,8 +54,8 @@
               <option value="4">その他</option>
             </select>
           
-
             <div class="actions">
+
               <input type="button" value="戻る" onclick="location.href='/event/calendar'">
               <input name="submit" value="保存" type="submit" id="form_submit">
               

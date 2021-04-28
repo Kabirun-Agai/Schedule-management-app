@@ -11,7 +11,7 @@ class Controller_Member_Event extends Controller_Member
     }
 
     public function action_form(){
-        return View::forge('event/form');
+        $this->template->content = Response::forge(View::forge('event/form'));
     }
 
     public function action_show($parama_1, $parama_2){
@@ -56,6 +56,12 @@ class Controller_Member_Event extends Controller_Member
         Response::redirect('/member/calendar');
     }
 
+    public function action_delete($parama_1){
+        $query = DB::delete('events_table')->where('id', '=', $parama_1);
+        $result = $query->execute();
+
+        Response::redirect('/member/calendar');
+    }
     public function action_auto_insert(){
         for ($i = 1 ; $i < 11; $i++){
             $event = Model_Event::forge();

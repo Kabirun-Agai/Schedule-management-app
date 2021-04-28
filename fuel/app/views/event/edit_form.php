@@ -7,7 +7,7 @@
 	<body>
       <div class="form-block" id="left-content">
         <div class="form-block-header">
-          <h1>ログイン</h1>
+          <h1>編集</h1>
         </div>
         <div class="form-block-body">
           <form action="/member/event/edit/<?php echo $rows[0]['id'];?>" accept-charset="utf-8" method="post">

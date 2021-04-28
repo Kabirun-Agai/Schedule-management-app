@@ -2,8 +2,8 @@
 <html>
 <head>
 <meta charset='utf-8' />
-<link href='/assets/js/lib/main.css' rel='stylesheet' />
 <?php echo Asset::css('style.css');?>
+<link href='/assets/js/lib/main.css' rel='stylesheet' />
 <script src='/assets/js/lib/main.js'></script>
 <script src="/assets/js/lib/locales-all.js"></script>
 <script src="/assets/js/moment.js"></script>
@@ -28,7 +28,35 @@
       businessHours: true, // display business hours
       editable: true,
       selectable: true,
-      events: '/rest/calendar/getEvents/${a}',//assets/js/examples/json/events.jsonでも表示可
+      // events: self.event = ko.observable(<?php //echo $data ;?>);'/rest/calendar/getEvents/${a}',//assets/js/examples/json/events.jsonでも表示可
+      // events: '/rest/calendar/getEvents/${a}',
+      events: function(info, successCallback, failureCallback) {
+        $.ajax({
+              type: "get",
+              //ここでデータの送信先URLを指定します。
+              url: '/rest/calendar/getEvents/0',
+              dataType: "json", //データ形式を指定
+            }).then((res) => {
+              successCallback(res);
+              console.log(res);
+        });
+
+
+       $('#select01').on('change',function(){
+         change(successCallback);
+       
+        //   $.ajax({
+        //       type: "get",
+        //       //ここでデータの送信先URLを指定します。
+        //       url: '/rest/calendar/getEvents/' + $(this).val(),
+        //       dataType: "json", //データ形式を指定
+        //     }).then((res) => {
+        //       successCallback(res);
+
+        //       console.log(res);
+        //     });
+        })
+      },
       eventSources: [
           {
             googleCalendarApiKey: 'AIzaSyDFmu3IwAeWovN0w6xvubPSVXBvcoxfvRI',
@@ -54,13 +82,108 @@
           },
         }).then((res) => {
           console.log(res);
-          calendar.render();
+        });
+      },
+    });
+      // $('#select01').on('change',function(){
+      //   var event = calendar.getEventById(1);
+      //   event.remove()
+      //   eventSource.remove();
+        
+      //   calendar.render();
+      //   alert("a");
+      // })
+    function change(callback){
+          $.ajax({
+              type: "get",
+              //ここでデータの送信先URLを指定します。
+              url: '/rest/calendar/getEvents/' + $(this).val(),
+              dataType: "json", //データ形式を指定
+            }).then((res) => {
+              callback(res);
+              calendar.render();
+              console.log(res);
+            });
+      
+    }
+    calendar.render();
+  });
+
+
+  document.addEventListener('DOMContentLoaded', function() {
+    var calendarEl = document.getElementById('listcalendar');
+
+    var calendar = new FullCalendar.Calendar(calendarEl, {
+        // method: post,
+      headerToolbar: {
+        left: 'prev,next today',
+        center: 'title',
+        right: 'dayGridMonth,timeGridWeek,timeGridDay,listMonth'
+      },
+      //timeZone: 'Asia/Tokyo',
+      locale: 'ja',
+      initialDate: date,
+      initialView: 'listMonth',
+      navLinks: true, // can click day/week names to navigate views
+      businessHours: true, // display business hours
+      editable: true,
+      selectable: true,
+      events: '/rest/calendar/getEvents2/${a}',//assets/js/examples/json/events.jsonでも表示可
+      eventSources: [
+          {
+            googleCalendarApiKey: 'AIzaSyDFmu3IwAeWovN0w6xvubPSVXBvcoxfvRI',
+            googleCalendarId: 'japanese__ja@holiday.calendar.google.com',
+            display: 'background',
+        }
+      ],
+      eventTimeFormat: { hour: 'numeric', minute: '2-digit' },
+      eventClick: function(info) {
+        window.location.href = '/member/event/show/' + info.event.id  + "/" + moment(info.event.start).format('MM-DD');
+      },
+      eventDrop: function (info) {
+        $.ajax({
+          //POST通信
+          type: "post",
+          //ここでデータの送信先URLを指定します。
+          url: "/rest/calendar/dropEvents",
+          dataType: "json", //データ形式を指定
+          data: {
+            start_date: moment(info.event.start).format('YYYY-MM-DD HH:mm'), //dropped_dateをキーにして値を送信
+            end_date: moment(info.event.end).format('YYYY-MM-DD HH:mm'),
+            id: info.event.id, //idをキーにして値を送信
+          },
+        }).then((res) => {
+          console.log(res);
         });
       },
     });
     
     calendar.render();
   });
+
+
+  // function seteventlist(successCallback){
+  //   $('#select01').on('change',function(){
+  //     $.ajax({
+  //         //POST通信
+  //         type: "get",
+  //         //ここでデータの送信先URLを指定します。
+  //         url: '/rest/calendar/getEvents/' + $(this).val(),
+  //         dataType: "json", //データ形式を指定
+  //       }).then((res) => {
+  //         successCallback(res);
+  //         console.log(res);
+  //       });
+  //    })
+  // }
+
+  // function inputChange(event){
+  //   console.log(event.currentTarget.value);
+  // }
+
+  
+
+
 </script>
 <style>
 
@@ -71,28 +194,58 @@
     font-size: 14px;
   }
 
-  #calendar {
-    max-width: 1100px;
-    margin: 0 auto;
+  #calendar , #listcalendar {
+    max-width: 2000px;
+    /* display: inline-block; */
+  }
+
+  .calendar1{
+    width: 1200px;
+    display: inline-block;
+  }
+
+  .calendar2{
+    display: inline-block;
   }
 
 </style>
 
 </head>
 <body>
-<form method="post" action="">
-  <select name="state" id="select01">
-    <option value="0">すべて</option>
-    <option value="1">仕事</option>
-    <option value="2">遊び</option>
-    <option value="3">食事</option>
-    <option value="4">その他</option>
-  </select>
-</form>
-  <div id='calendar'>
-  <button id="eventbtn" onclick="location.href='/member/event/form'">予定を追加</button>
-  </div>
-  
 
+　<h1 id="nextschedule">次の予定:
+    <?php 
+    if ($time){
+      echo $time[0]["start"]; 
+      echo $time[0]["title"];
+    }else
+      echo "なし";
+    ?>
+  </h1>
+  <!-- <form method="post" action="">
+    <select name="state" id="select01">
+      <option value="0">すべて</option>
+      <option value="1">仕事</option>
+      <option value="2">遊び</option>
+      <option value="3">食事</option>
+      <option value="4">その他</option>
+    </select>
+  </form> -->
+
+  <select id="select01">
+  <option value="1" >選択肢1</option>
+  <option value="2" >選択肢2</option>
+  <option value="3" >選択肢3</option>
+ </select>
+
+ <div class="calendar1">
+  <div id='calendar'>
+    <button id="eventbtn" onclick="location.href='/member/event/form'">予定を追加</button>
+  </div>
+ </div>
+
+  <div class="calendar2">
+    <div id='listcalendar'></div>
+  </div>
 </body>
 </html>
