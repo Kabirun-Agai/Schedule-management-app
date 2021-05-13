@@ -48,8 +48,9 @@ class Controller_Member_Event extends Controller_Member
         $form['end'] = Input::post('endtime');
         $form['details'] = Input::post('details');
         $form['category'] = Input::post('state');
-        
+        $form['user_id'] = Arr::get(Auth::get_user_id(),1);
 
+    
         $event = Model_Event::forge();
         $event->set($form);
         $event->save();

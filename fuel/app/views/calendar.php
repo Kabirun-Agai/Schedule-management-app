@@ -41,10 +41,7 @@
               console.log(res);
         });
 
-
-       $('#select01').on('change',function(){
-         change(successCallback);
-       
+        // $('#select01').on('change',function(){
         //   $.ajax({
         //       type: "get",
         //       //ここでデータの送信先URLを指定します。
@@ -55,7 +52,7 @@
 
         //       console.log(res);
         //     });
-        })
+        // })
       },
       eventSources: [
           {
@@ -85,28 +82,21 @@
         });
       },
     });
-      // $('#select01').on('change',function(){
-      //   var event = calendar.getEventById(1);
-      //   event.remove()
-      //   eventSource.remove();
-        
-      //   calendar.render();
-      //   alert("a");
-      // })
-    function change(callback){
-          $.ajax({
-              type: "get",
-              //ここでデータの送信先URLを指定します。
-              url: '/rest/calendar/getEvents/' + $(this).val(),
-              dataType: "json", //データ形式を指定
-            }).then((res) => {
-              callback(res);
-              calendar.render();
-              console.log(res);
-            });
-      
-    }
     calendar.render();
+
+    document.getElementById("select01").addEventListener('change', function()　{
+      $.ajax({
+          type: "get",
+          //ここでデータの送信先URLを指定します。
+          url: '/rest/calendar/getEvents/' + $(this).val(),
+          dataType: "json", //データ形式を指定
+        }).then((res) => {
+            calendar.removeAllEvents();
+            calendar.addEventSource(res);
+            calendar.render();
+        });
+    });
+
   });
 
 
@@ -128,7 +118,17 @@
       businessHours: true, // display business hours
       editable: true,
       selectable: true,
-      events: '/rest/calendar/getEvents2/${a}',//assets/js/examples/json/events.jsonでも表示可
+      events: function(info, successCallback, failureCallback) {
+        $.ajax({
+              type: "get",
+              //ここでデータの送信先URLを指定します。
+              url: '/rest/calendar/getEvents2/0',
+              dataType: "json", //データ形式を指定
+            }).then((res) => {
+              successCallback(res);
+              console.log(res);
+        });
+      },
       eventSources: [
           {
             googleCalendarApiKey: 'AIzaSyDFmu3IwAeWovN0w6xvubPSVXBvcoxfvRI',
@@ -153,35 +153,27 @@
             id: info.event.id, //idをキーにして値を送信
           },
         }).then((res) => {
-          console.log(res);
+          
         });
       },
     });
     
     calendar.render();
+    document.getElementById("select01").addEventListener('change', function()　{
+        $.ajax({
+              type: "get",
+              //ここでデータの送信先URLを指定します。
+              url: '/rest/calendar/getEvents2/' + $(this).val(),
+              dataType: "json", //データ形式を指定
+            }).then((res) => {
+                calendar.removeAllEvents();
+                calendar.addEventSource(res);
+                calendar.render();
+            });
+    });
+
+    
   });
-
-
-  // function seteventlist(successCallback){
-  //   $('#select01').on('change',function(){
-  //     $.ajax({
-  //         //POST通信
-  //         type: "get",
-  //         //ここでデータの送信先URLを指定します。
-  //         url: '/rest/calendar/getEvents/' + $(this).val(),
-  //         dataType: "json", //データ形式を指定
-  //       }).then((res) => {
-  //         successCallback(res);
-  //         console.log(res);
-  //       });
-  //    })
-  // }
-
-  // function inputChange(event){
-  //   console.log(event.currentTarget.value);
-  // }
-
-  
 
 
 </script>
@@ -194,17 +186,18 @@
     font-size: 14px;
   }
 
-  #calendar , #listcalendar {
-    max-width: 2000px;
-    /* display: inline-block; */
+  #contents{
+    width: auto;
   }
 
+
   .calendar1{
-    width: 1200px;
+    width: 60%;
     display: inline-block;
   }
 
   .calendar2{
+    width: 30%;
     display: inline-block;
   }
 
@@ -222,30 +215,25 @@
       echo "なし";
     ?>
   </h1>
-  <!-- <form method="post" action="">
-    <select name="state" id="select01">
-      <option value="0">すべて</option>
-      <option value="1">仕事</option>
-      <option value="2">遊び</option>
-      <option value="3">食事</option>
-      <option value="4">その他</option>
-    </select>
-  </form> -->
 
-  <select id="select01">
-  <option value="1" >選択肢1</option>
-  <option value="2" >選択肢2</option>
-  <option value="3" >選択肢3</option>
- </select>
+  <div id="contents">
+    <select id="select01">
+        <option value="0">すべて</option>
+        <option value="1">仕事</option>
+        <option value="2">遊び</option>
+        <option value="3">食事</option>
+        <option value="4">その他</option>
+  </select>
 
- <div class="calendar1">
-  <div id='calendar'>
-    <button id="eventbtn" onclick="location.href='/member/event/form'">予定を追加</button>
+  <div class="calendar1">
+    <div id='calendar'>
+      <button id="eventbtn" onclick="location.href='/member/event/form'">予定を追加</button>
+    </div>
   </div>
- </div>
 
-  <div class="calendar2">
-    <div id='listcalendar'></div>
+    <div class="calendar2">
+      <div id='listcalendar'></div>
+    </div>
   </div>
 </body>
 </html>

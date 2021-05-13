@@ -4,41 +4,32 @@
 		<meta charset="UTF-8">
     <?php echo Asset::css('style.css');?>
     <?php echo Asset::css('viewformat.css');?>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.5.1/knockout-latest.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout-validation/2.0.4/knockout.validation.min.js"></script>
-    <script src="/assets/js/knockout-3.5.1.js"></script>
-    <script>
-      window.onload = function() {
-          var viewModel = {
-            title: 'Hello Knockout.js!!',
-            isTrue: true
-          };
-          ko.applyBindings(viewModel);
-      };
-    </script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
 	</header>
  
 	<body>
+    <div id="knockout-app">
       <div class="form-block" id="left-content">
         <div class="form-block-header">
           <h1>新しい予定</h1>
         </div>
         <div class="form-block-body">
-          <form action="/member/event/save" accept-charset="utf-8" method="post">
+          <form id="event" action="/member/event/save" accept-charset="utf-8" method="post" data-bind="submit: checkevent">
             <p>
               <label for="form_title">タイトル</label>
-              <input name="title" value="" type="text" id="form_title" data-bind="value: title">
-              <span data-bind="ifnot: isTrue">isTrue</span>
+              <input name="title" value="" type="text" id="form_title" data-bind="value:title">
+              
             </p>
 
             <p>
               <label for="form_starttime">予定開始時刻</label>
-              <input name="starttime" value="" type="datetime-local" id="form_starttime" >
+              <input name="starttime" value="" type="datetime-local" id="form_starttime" data-bind="value:starttime">
             </p>
 
             <p>
               <label for="form_endtime">予定終了時刻</label>
-              <input name="endtime" value="" type="datetime-local" id="form_endtime" >
+              <input name="endtime" value="" type="datetime-local" id="form_endtime" data-bind="value: endtime">
             </p>
 
             <p>
@@ -57,8 +48,8 @@
             <div class="actions">
 
               <input type="button" value="戻る" onclick="location.href='/event/calendar'">
-              <input name="submit" value="保存" type="submit" id="form_submit">
-              
+              <!-- <input name="submit" value="保存" type="submit" id="form_submit" >  -->
+              <button id="form_edit" >保存</button>
             </div>
 
             
@@ -66,7 +57,12 @@
           
         </div>
       </div>
-
-		<!-- <div id='calendar'></div> -->
+    <div>
+      
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.5.1/knockout-latest.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout-validation/2.0.4/knockout.validation.min.js"></script>
+    <script src="/assets/js/knocout-checkevent.js"></script>
+    
 	</body>
 </html>	

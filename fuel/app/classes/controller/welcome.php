@@ -37,6 +37,11 @@ class Controller_Welcome extends Controller_Template
 		}
 	}
 
+	public function action_index2()
+	{
+		return View::forge('index2');
+	}
+
 
 	/**
 	 * A typical "Hello, Bob!" type example.  This uses a Presenter to

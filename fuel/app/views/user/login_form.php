@@ -13,6 +13,11 @@
         </div>
         <div class="form-block-body">
           <form action="/user/login" accept-charset="utf-8" method="post">
+            <?php if(isset($error)) : ?>
+              <div class="clearfix" style="color:red">
+                ログインできませんでした。
+              </div>
+            <?php endif; ?>
             <p>
               <label for="form_username">ユーザ名</label>
               <input name="username" value="" type="text" id="form_username">

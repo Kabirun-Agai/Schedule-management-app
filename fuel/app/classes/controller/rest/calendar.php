@@ -6,33 +6,47 @@ class Controller_Rest_Calendar extends Controller_Rest
     public function get_getEvents($param)
     {
         if($param == 0){
-            $getEvents = [];
-            $getEvents = Model_Event::find_all();
+            $query = DB::select()->from('events_table');
+            $query->where('user_id', '=', Arr::get(Auth::get_user_id(),1));
+            $getEvents = $query->execute()->as_array();
         }else{
-            $getEvents = [];
-            $getEvents = Model_Event::find_by("category", $param);
+            $query = DB::select()->from('events_table');
+            $query->where('user_id', '=', Arr::get(Auth::get_user_id(),1));
+            $query->where('category', '=', $param);
+            $getEvents = $query->execute()->as_array();
         }
         $events = array();
-        foreach($getEvents as $values){
-            $event = array();
-            $event["id"] = $values["id"];
-            $event["title"] = $values["title"];
-            $event["start"] = $values["start"];
-            $event["end"] = $values["end"];
-            $events[] = $event;
+
+        if($getEvents){
+            foreach($getEvents as $values){
+                $event = array();
+                $event["id"] = $values["id"];
+                $event["title"] = $values["title"];
+                $event["start"] = $values["start"];
+                $event["end"] = $values["end"];
+                $events[] = $event;
+            }
         }
+        
         echo json_encode($events);
     }
 
     public function get_getEvents2($param)
     {
-        $range_start = $_GET['start'];
-        $range_end = $_GET['end'];
-        
-        $time = date("Y/m/d H:i:s");
-        $query = DB::select()->from('events_table');
-        $query->where('start', '>=', $time);
-        $getEvents = $query->execute()->as_array();
+        if($param == 0){
+            $time = date("Y/m/d H:i:s");
+            $query = DB::select()->from('events_table');
+            $query->where('start', '>=', $time);
+            $query->where('user_id', '=', Arr::get(Auth::get_user_id(),1));
+            $getEvents = $query->execute()->as_array();
+        }else{
+            $time = date("Y/m/d H:i:s");
+            $query = DB::select()->from('events_table');
+            $query->where('start', '>=', $time);
+            $query->where('category', '=', $param);
+            $query->where('user_id', '=', Arr::get(Auth::get_user_id(),1));
+            $getEvents = $query->execute()->as_array();
+        }
 
         $events = array();
         foreach($getEvents as $values){
