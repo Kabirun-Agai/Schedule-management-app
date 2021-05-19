@@ -46,10 +46,7 @@ class Controller_User extends Controller_Template{
     }
 
     public function action_editemail(){
-        $query = DB::update('users_table');
-        $query->value('email',Input::post('email'));
-        $query->where('id', '=', 1);
-        $result = $query->execute();
+        $result = Model_User::editEmail(Input::post());
         
         if($result){
             Response::redirect('member/calendar');
@@ -60,10 +57,7 @@ class Controller_User extends Controller_Template{
     }
 
     public function action_editusername(){
-        $query = DB::update('users_table');
-        $query->value('username',Input::post('username'));
-        $query->where('id', '=', 1);
-        $result = $query->execute();
+        $result = Model_User::editUsername(Input::post());
         
         if($result){
             Response::redirect('member/calendar');

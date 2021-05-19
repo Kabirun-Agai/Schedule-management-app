@@ -1,11 +1,5 @@
 <!DOCTYPE HTML>
 <html>
-	<header>
-	<meta charset="UTF-8">
-    <?php echo Asset::css('style.css');?>
-    <?php echo Asset::css('viewformat.css');?>
-	</header>
- 
 	<body>
       <div class="form-block" id="left-content">
         <div class="form-block-header">

@@ -1,19 +1,15 @@
 <?php
 
+use Fuel\Core\Model;
 
 class Controller_Rest_Calendar extends Controller_Rest
 {
     public function get_getEvents($param)
     {
         if($param == 0){
-            $query = DB::select()->from('events_table');
-            $query->where('user_id', '=', Arr::get(Auth::get_user_id(),1));
-            $getEvents = $query->execute()->as_array();
+            $getEvents = Model_Event::event_all1();
         }else{
-            $query = DB::select()->from('events_table');
-            $query->where('user_id', '=', Arr::get(Auth::get_user_id(),1));
-            $query->where('category', '=', $param);
-            $getEvents = $query->execute()->as_array();
+            $getEvents = Model_Event::event_category1($param);
         }
         $events = array();
 
@@ -34,18 +30,9 @@ class Controller_Rest_Calendar extends Controller_Rest
     public function get_getEvents2($param)
     {
         if($param == 0){
-            $time = date("Y/m/d H:i:s");
-            $query = DB::select()->from('events_table');
-            $query->where('start', '>=', $time);
-            $query->where('user_id', '=', Arr::get(Auth::get_user_id(),1));
-            $getEvents = $query->execute()->as_array();
+            $getEvents = Model_Event::event_all2();
         }else{
-            $time = date("Y/m/d H:i:s");
-            $query = DB::select()->from('events_table');
-            $query->where('start', '>=', $time);
-            $query->where('category', '=', $param);
-            $query->where('user_id', '=', Arr::get(Auth::get_user_id(),1));
-            $getEvents = $query->execute()->as_array();
+            $getEvents = Model_Event::event_category2($param);
         }
 
         $events = array();
@@ -62,12 +49,7 @@ class Controller_Rest_Calendar extends Controller_Rest
     
     public function post_dropEvents() // ドラッグ&ドロップしたときの挙動
     {
-      $p_post = Input::post();
-      $query = DB::update('events_table');
-      $query->value('start', $p_post["start_date"]);
-      $query->value('end', $p_post["end_date"]);
-      $query->where('id', $p_post["id"]);
-      $result = $query->execute();
+      Model_Event::dropEvents(Input::post());
      }
 
 }

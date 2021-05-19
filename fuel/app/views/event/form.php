@@ -1,13 +1,5 @@
-<!DOCTYPE HTML>
-<html>
-	<header>
-		<meta charset="UTF-8">
-    <?php echo Asset::css('style.css');?>
-    <?php echo Asset::css('viewformat.css');?>
-    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 
-	</header>
- 
+<html>
 	<body>
     <div id="knockout-app">
       <div class="form-block" id="left-content">
@@ -24,12 +16,12 @@
 
             <p>
               <label for="form_starttime">予定開始時刻</label>
-              <input name="starttime" value="" type="datetime-local" id="form_starttime" data-bind="value:starttime">
+              <input name="start" value="" type="datetime-local" id="form_starttime" data-bind="value:starttime">
             </p>
 
             <p>
               <label for="form_endtime">予定終了時刻</label>
-              <input name="endtime" value="" type="datetime-local" id="form_endtime" data-bind="value: endtime">
+              <input name="end" value="" type="datetime-local" id="form_endtime" data-bind="value: endtime">
             </p>
 
             <p>
@@ -48,7 +40,6 @@
             <div class="actions">
 
               <input type="button" value="戻る" onclick="location.href='/event/calendar'">
-              <!-- <input name="submit" value="保存" type="submit" id="form_submit" >  -->
               <button id="form_edit" >保存</button>
             </div>
 

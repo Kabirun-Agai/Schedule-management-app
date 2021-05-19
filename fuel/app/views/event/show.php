@@ -1,13 +1,5 @@
-<!DOCTYPE HTML>
 <html>
-	<header>
-		<meta charset="UTF-8">
-    <?php echo Asset::css('style.css');?>
-    <?php echo Asset::css('viewformat.css');?>
-    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 
-	</header>
- 
 	<body>
       <div class="form-block" id="left-content">
         <div class="form-block-header">
@@ -30,6 +22,22 @@
               <label for="form_details">詳細:<?php echo $rows[0]["details"] ?></label>
             </p>
 
+            <p>
+              <label for="form_details">カテゴリー:
+                <?php if($rows[0]["category"] == 1) : ?>
+                   仕事
+                <?php elseif($rows[0]["category"] == 2) : ?>
+                   遊び
+                <?php elseif($rows[0]["category"] == 3) : ?>
+                   食事
+              <?php else: ?>
+                   その他
+
+             <?php endif ; ?>
+
+              </label>
+            </p>
+
             <div class="actions">
               <input type="button" value="戻る" onclick="location.href='/event/calendar'">
               <input type="button" value="編集" onclick="location.href='/member/event/edit_form/' + <?php echo $rows[0]['id'];?>">
@@ -49,33 +57,6 @@
           ok: true
         }
       };
-        // swal(options)
-        //   // then() メソッドを使えばクリックした時の値が取れます
-        //   .then(function(val) {
-        //     if (val) {
-        //       // Okボタンが押された時の処理
-        //       swal({
-        //         text: "予定が削除されました",
-        //         icon: "warning",
-        //         buttons: {
-        //           ok: true
-        //         },
-        //         timer: 1500 // 2.5秒後に自動的に閉じる
-        //       });
-              
-        //     } else {
-        //       // キャンセルボタンを押した時の処理
-        //       // valには 'null' が返ってきます
-        //       swal({
-        //         text: "キャンセルされました",
-        //         icon: "warning",
-        //         buttons: false,
-        //         timer: 1500 // 2.5秒後に自動的に閉じる
-        //       });
-        //     }
-        // });
-
-      
 
       var btn = document.getElementById('delete-button');
 

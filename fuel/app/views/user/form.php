@@ -1,12 +1,6 @@
-<!DOCTYPE HTML>
+
 <html>
-	<header>
-	  <meta charset="UTF-8">
-    <?php echo Asset::css('style.css');?>
-    <?php echo Asset::css('viewformat.css');?>
-    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
-	</header>
- 
+
 	<body>
   <div id="knockout-app">
       <div class="form-block" id="left-content">

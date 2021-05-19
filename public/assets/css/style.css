@@ -3495,3 +3495,112 @@ header.header-hover #navi {
   top: 0;
   opacity: 1;
 }
+
+/* 追加記述 */
+
+
+
+body {
+
+  padding: 0;
+  font-family: Arial, Helvetica Neue, Helvetica, sans-serif;
+  font-size: 14px;
+}
+
+#contents{
+  width: auto;
+}
+
+
+.calendar1{
+  width: 60%;
+  display: inline-block;
+  padding-bottom: 20px;
+}
+
+.calendar2{
+  width: 30%;
+  display: inline-block;
+}
+
+
+.cntainer{
+  background-color: #ffffff;
+}
+.top-content {
+  padding: 180px 0 180px 0;
+  background-image: url('/assets/img/topimage.jpg');
+  background-size: cover;
+
+  text-align: center;
+}
+
+.btn-wrapper{
+  border-style: none;
+  margin : 0 auto;
+  width: 180px;
+  height: 31px;
+  background: linear-gradient(to bottom,#b4b0f1,#ebebeb);
+  border-radius: 10px;
+  border: 1px #b4c8ff solid;
+}
+
+.btn-wrapper:hover{
+  cursor: pointer;
+  background: #5f62f3;
+}
+
+.top-message {
+  position: relative;
+}
+
+
+.description{
+  text-align:center;
+  width: 100%;
+  padding: 0px 16px;
+  border-bottom: solid 2px #333 ; 
+
+}
+
+.description-CC:first-letter{
+    font-size: 2em;
+    color: #7172ac;
+}
+
+.use-CC:first-letter{
+    font-size: 2em;
+    color: #ee4a4a;
+}
+.use{
+  display: flex;
+  flex-flow: column;
+  text-align:center;
+
+}
+.use-img{
+  
+  text-align:center;
+}
+
+img{
+  border-radius: 30px;
+}
+
+.element-CC:first-letter{
+    font-size: 2em;
+    color: #afb6bf;
+}
+
+.element{
+  display: flex;
+  flex-flow: column;
+  text-align:center;
+  border-top: solid 2px #333 ;
+}
+
+.element-img{
+
+  text-align:center;
+}
+

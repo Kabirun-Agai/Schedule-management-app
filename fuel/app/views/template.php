@@ -1,8 +1,16 @@
+<!DOCTYPE html>
 <html>
     <head>
+    <meta charset='utf-8' />
      <?php echo Asset::css('style.css');?>
      <?php echo Asset::css('viewformat.css');?>
      <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.3.1.min.js"></script>
+     <link href='/assets/js/lib/main.css' rel='stylesheet' />
+     <script src='/assets/js/lib/main.js'></script>
+     <script src="/assets/js/lib/locales-all.js"></script>
+     <script src="/assets/js/moment.js"></script>
+     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+     <?php echo Asset::js('tab.js');?>
      <script>
          function disp2(){
 
@@ -22,11 +30,6 @@
 
         }
      </script>
-     <style>
-        calendar {
-            padding: 100px;
-        }
-    </style>
     </head>
     <body>
         <header id="header"> 
@@ -48,13 +51,10 @@
             </ul>
         </header>
 
-        <calendar>
+   
             <?php echo $content; ?>
-        </calendar>
+ 
       
 
-        <footer>
-        testfooter
-        </footer>
     </body>
 </html>

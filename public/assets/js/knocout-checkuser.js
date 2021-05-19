@@ -60,12 +60,17 @@ function viewModel(){
     self.checkuser=function(){
       // if(self.time.val() == "")
       var errors = ko.validation.group(self);
-      
-      if (errors().length > 0 && self.password() != self.checkpassword()) {
+      var val = "現在のパスワードを入力してください"
+      var idx = errors().indexOf(val);
+      if(idx >= 0){
+        errors().splice(idx, 1); 
+      }
+
+      if (errors().length > 0 && self.password() != self.checkpass()) {
          errors.showAllMessages();
          var options = {
           title: "入力に誤りがあります",
-          text: errors()+",パスワードが一致しません",
+          text: errors()+",パスワードが一致しません1",
           icon: "error", // warning, info, error
         
         }
@@ -87,11 +92,11 @@ function viewModel(){
          console.log(errors());
          return;
 
-      }else if(self.password != self.checkpassword){
+      }else if(self.password() != self.checkpass()){
         errors.showAllMessages();
          var options = {
           title: "入力に誤りがあります",
-          text: "パスワードが一致しません",
+          text: "パスワードが一致しません11",
           icon: "error", // warning, info, error
         
         }
@@ -130,7 +135,7 @@ function viewModel(){
         errors.showAllMessages();
         var options = {
          title: "入力に誤りがあります",
-         text: errors()[0]+"",
+         text: errors()[1]+"",
          icon: "error", // warning, info, error
       }   
        swal(options);
@@ -145,6 +150,8 @@ function viewModel(){
       var errors = ko.validation.group(self);
       if (errors().length >2) {
         errors.showAllMessages();
+        errors().shift();
+        errors().shift();
         var options = {
          title: "入力に誤りがあります",
          text: errors()+"",
