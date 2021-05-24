@@ -1,8 +1,7 @@
 <?php
 
 class Model_Event extends Model_Crud{
-    protected static $_table_name = 'events_table';
-    protected static $_primary_key = 'id';
+
 
     static function event_all(){
         $query =  DB::select()->from("events_table");
@@ -40,12 +39,14 @@ class Model_Event extends Model_Crud{
         $time = date("Y/m/d H:i:s");
 
         $query = DB::update('events_table');
-        $query->value('title', $p_post["title"]);
-        $query->value('start', $p_post["start"]);
-        $query->value('end', $p_post["end"]);
-        $query->value('details', $p_post["details"]);
-        $query->value('category', $p_post["state"]);
-        $query->value('updated_at', $time);
+        $query->set(array(
+            'title'=> $p_post["title"],
+            'start'=> $p_post["start"],
+            'end'  => $p_post["end"],
+            'details'=> $p_post["details"],
+            'category'=> $p_post["state"],
+            'updated_at'=>  $time,
+        ));
         $query->where('id', $parama);
         $result = $query->execute();
         return $result;

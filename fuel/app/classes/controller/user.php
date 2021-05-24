@@ -9,17 +9,22 @@ class Controller_User extends Controller_Template{
         $this->template->content = Response::forge(View::forge('user/form'));
     }
     public function action_save(){
-        $auth = Auth::instance();
-        $auth->create_user(Input::post('username'), Input::post('password'), Input::post('email'));
-        if (Auth::login(Input::post('username'), Input::post('password'))){
-            Response::redirect('member/calendar');
+        $result = Model_User::userSave(Input::post());
+
+        if($result){
+            if (Auth::login(Input::post('username'), Input::post('password'))){
+                Model_User::createTime();
+                Response::redirect('member/calendar');
+            }else{
+                $data["error"] = true;
+                $this->template->content = Response::forge(View::forge('user/login_form', $data));
+            }
         }else{
             $data["error"] = true;
             $this->template->content = Response::forge(View::forge('user/login_form', $data));
         }
     }
 
- 
 
     public function action_login_form(){
         $this->template->content = Response::forge(View::forge('user/login_form'));
@@ -68,13 +73,15 @@ class Controller_User extends Controller_Template{
     }
 
     public function action_editpassword(){
-        $auth = Auth::instance();
+        $result = Model_User::editPassword(Input::post());
         
-        if($auth->change_password(Input::post('password'), Input::post('newpassword'))){
+        if($result){
             Response::redirect('member/calendar');
         }else{
             $data["error"] = true;
             $this->template->content = Response::forge(View::forge('user/edit_form', $data));
         }
     }
+
+    
 }

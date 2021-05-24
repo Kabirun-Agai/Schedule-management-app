@@ -1,5 +1,9 @@
+<!DOCTYPE html>
 <html>
-	<meta charset="UTF-8">
+    <head>
+        <meta charset="UTF-8">
+    </head>
+	
 	<body>
         <div class="cntainer">
             <div class="top-content">

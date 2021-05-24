@@ -1,5 +1,5 @@
+<!DOCTYPE html>
 <html>
-
 	<body>
     <div id="knockout-app">
       <div class="form-block" id="left-content">

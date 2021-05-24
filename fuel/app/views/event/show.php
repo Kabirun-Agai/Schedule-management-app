@@ -1,5 +1,5 @@
+<!DOCTYPE html>
 <html>
-
 	<body>
       <div class="form-block" id="left-content">
         <div class="form-block-header">
