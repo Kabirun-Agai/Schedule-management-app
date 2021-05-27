@@ -5,6 +5,7 @@ class Model_Event extends Model_Crud{
 
     static function event_all(){
         $query =  DB::select()->from("events_table");
+        $query->where('deleted_at', '=', null);
         $result = $query->execute()->as_array();
 
         return $result; 
@@ -13,6 +14,7 @@ class Model_Event extends Model_Crud{
     static function event_by($str ,$terms ,$parama){
         $query = DB::select()->from("events_table");
         $query->where($str, $terms, $parama);
+        $query->where('deleted_at', '=', null);
         $result = $query->execute()->as_array();
 
         return $result;
@@ -29,7 +31,8 @@ class Model_Event extends Model_Crud{
             'end'  => $p_post["end"],
             'details'=> $p_post["details"],
             'category'=> $p_post["state"],
-            'updated_at'=>  $time,
+            'created_at'=>  $time,
+            'user_id' => Arr::get(Auth::get_user_id(),1),
         ));
         $result = $query->execute();
         return $result;
@@ -56,7 +59,6 @@ class Model_Event extends Model_Crud{
         $time = date("Y/m/d H:i:s");
 
         $query = DB::update('events_table');
-        $query->value('delete_flag', true);
         $query->value('deleted_at', $time);
         $query->where('id', '=', $parama);
         $result = $query->execute();
@@ -64,48 +66,25 @@ class Model_Event extends Model_Crud{
         return $result;
     }
 
-    //すべてのイベント表示
-    static function event_all1(){
-        $query = DB::select()->from('events_table');
-        $query->where('user_id', '=', Arr::get(Auth::get_user_id(),1));
-        $query->where('delete_flag', '=', null);
-        $result = $query->execute()->as_array();
-
-        return $result;
-    }
-    
-    static function event_all2(){
+    //イベントを所得する
+    //calendar２のイベント取得するときは$valに1を指定する
+    static function event_get($param, $val = false){
         $time = date("Y/m/d H:i:s");
         $query = DB::select()->from('events_table');
-        $query->where('start', '>=', $time);
         $query->where('user_id', '=', Arr::get(Auth::get_user_id(),1));
-        $query->where('delete_flag', '=', null);
+        $query->where('deleted_at', '=', null);
+        
+        if($param != 0){
+            $query->where('category', '=', $param);
+        }
+
+        if($val){
+            $query->where('start', '>=', $time);
+        }
         $result = $query->execute()->as_array();
 
         return $result;
-    }
 
-    // 指定されたカテゴリのイベント表示
-    static function event_category1($param){
-        $query = DB::select()->from('events_table');
-        $query->where('user_id', '=', Arr::get(Auth::get_user_id(),1));
-        $query->where('category', '=', $param);
-        $query->where('delete_flag', '=', null);
-        $result = $query->execute()->as_array();
-
-        return $result;
-    }
-
-    static function event_category2($param){
-        $time = date("Y/m/d H:i:s");
-        $query = DB::select()->from('events_table');
-        $query->where('start', '>=', $time);
-        $query->where('category', '=', $param);
-        $query->where('user_id', '=', Arr::get(Auth::get_user_id(),1));
-        $query->where('delete_flag', '=', null);
-        $result = $query->execute()->as_array();
-
-        return $result;
     }
 
     // イベントをドロップ&ドロップしたときの処理

@@ -1,36 +1,6 @@
 <!DOCTYPE html>
 <html>
-    <head>
-    <meta charset='utf-8' />
-     <?php echo Asset::css('style.css');?>
-     <?php echo Asset::css('viewformat.css');?>
-     <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.3.1.min.js"></script>
-     <link href='/assets/js/lib/main.css' rel='stylesheet' />
-     <script src='/assets/js/lib/main.js'></script>
-     <script src="/assets/js/lib/locales-all.js"></script>
-     <script src="/assets/js/moment.js"></script>
-     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
-     <?php echo Asset::js('tab.js');?>
-     <script>
-         function disp2(){
-
-            // 「OK」時の処理開始 ＋ 確認ダイアログの表示
-            if(window.confirm('本当にログアウトしますか？')){
-                location.href='/user/logout';
-            }
-            // 「OK」時の処理終了
-
-            // 「キャンセル」時の処理開始
-            else{
-
-            window.alert('キャンセルされました'); // 警告ダイアログを表示
-
-            }
-            // 「キャンセル」時の処理終了
-
-        }
-     </script>
-    </head>
+    <?php echo View::forge('head'); ?>
     <body>
         <header id="header"> 
             <div class="header-logo">
@@ -52,9 +22,10 @@
         </header>
 
    
-            <?php echo $content; ?>
+        <?php echo $content; ?>
  
-      
 
+        <?php echo View::forge('script');?>
     </body>
+    
 </html>

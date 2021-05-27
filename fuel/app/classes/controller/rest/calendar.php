@@ -6,11 +6,8 @@ class Controller_Rest_Calendar extends Controller_Rest
 {
     public function get_getEvents($param)
     {
-        if($param == 0){
-            $getEvents = Model_Event::event_all1();
-        }else{
-            $getEvents = Model_Event::event_category1($param);
-        }
+        $getEvents = Model_Event::event_get($param);
+     
         $events = array();
 
         if($getEvents){
@@ -29,11 +26,7 @@ class Controller_Rest_Calendar extends Controller_Rest
 
     public function get_getEvents2($param)
     {
-        if($param == 0){
-            $getEvents = Model_Event::event_all2();
-        }else{
-            $getEvents = Model_Event::event_category2($param);
-        }
+        $getEvents = Model_Event::event_get($param, 1);
 
         $events = array();
         foreach($getEvents as $values){

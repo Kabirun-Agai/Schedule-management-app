@@ -51,7 +51,7 @@ class Controller_User extends Controller_Template{
     }
 
     public function action_editemail(){
-        $result = Model_User::editEmail(Input::post());
+        $result = Model_User::editUser(Input::post());
         
         if($result){
             Response::redirect('member/calendar');
@@ -62,7 +62,7 @@ class Controller_User extends Controller_Template{
     }
 
     public function action_editusername(){
-        $result = Model_User::editUsername(Input::post());
+        $result = Model_User::editUser(Input::post());
         
         if($result){
             Response::redirect('member/calendar');
@@ -73,7 +73,7 @@ class Controller_User extends Controller_Template{
     }
 
     public function action_editpassword(){
-        $result = Model_User::editPassword(Input::post());
+        $result = Model_User::editUser(Input::post());
         
         if($result){
             Response::redirect('member/calendar');

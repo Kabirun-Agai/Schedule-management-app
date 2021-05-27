@@ -18,39 +18,25 @@ class Model_User extends Model_Crud{
         $result = $query->execute();
     }
 
-    static function editUsername($p_post){
+
+    static function editUser($p_post){
         $time = date("Y/m/d H:i:s");
 
         $query = DB::update('users_table');
-        $query->value('username',$p_post['username']);
+        
+        if(array_key_exists('username',$p_post)){
+            $query->value('username',$p_post['username']);
+        }elseif(array_key_exists('email',$p_post)){
+            $query->value('email',$p_post['email']);
+        }
         $query->value('updated_at', $time);
-        $query->where('id', '=', Arr::get(Auth::get_user_id(),1));
+        $query->where('id', '=', 1);
         $result = $query->execute();
 
-        return $result;
-    } 
-
-    static function editEmail($p_post){
-        $time = date("Y/m/d H:i:s");
-
-        $query = DB::update('users_table');
-        $query->value('email',$p_post['email']);
-        $query->value('updated_at', $time);
-        $query->where('id', '=', Arr::get(Auth::get_user_id(),1));
-        $result = $query->execute();
-
-        return $result;
-    }
-
-    static function editPassword($p_post){
-        $auth = Auth::instance();
-        $result = $auth->change_password($p_post["password"], $p_post["newpassword"]);
-
-        $time = date("Y/m/d H:i:s");
-        $query = DB::update('users_table');
-        $query->value('updated_at', $time);
-        $query->where('id', '=', Arr::get(Auth::get_user_id(),1));
-        $query->execute();
+        if(array_key_exists('password',$p_post)){
+            $auth = Auth::instance();
+            $result = $auth->change_password($p_post["password"], $p_post["newpassword"]);
+        }
 
         return $result;
     }
